@@ -7,8 +7,13 @@
 #include <chrono>
 
 void moveMouse(int x, int y);
+
 void leftClick();
+void holdLeftClick(int time); // in seconds
+
 void rightClick();
+void holdRightClick(int time); // in seconds
+
 void pressKey(std::string key);
 void typeString(const std::string text);
 
