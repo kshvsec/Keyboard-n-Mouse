@@ -6,6 +6,11 @@
 #include <thread>
 #include <chrono>
 
+// oneline defined functions for thread sleep management
+
+#define sleepInS(x) std::this_thread::sleep_for(std::chrono::seconds(x));
+#define sleepInMs(x) std::this_thread::sleep_for(std::chrono::milliseconds(x))
+
 void moveMouse(int x, int y);
 
 void leftClick();
