@@ -6,3 +6,4 @@
 
 # Issues
 - Does not include space character when handling spaces in typestring function
+- Cannot find a way to make mouse super flexible on the client side
