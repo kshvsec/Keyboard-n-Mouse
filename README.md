@@ -6,4 +6,4 @@
 
 # Issues
 - ~~Does not include space character when handling spaces in typestring function~~
-- Cannot find a way to make mouse super flexible on the client side
+- Cannot find a way to make mouse super flexible on the client side : Might use flask and host a server on the client side to get tap positions and render them on the server
