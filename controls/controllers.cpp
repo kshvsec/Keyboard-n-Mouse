@@ -127,7 +127,7 @@ void typeString(std::string text) {
     alphabetKeys["X"] = 0x58;
     alphabetKeys["Y"] = 0x59;
     alphabetKeys["Z"] = 0x5A;
-    
+
     alphabetKeys["a"] = 0x41;
     alphabetKeys["b"] = 0x42;
     alphabetKeys["c"] = 0x43;
@@ -154,22 +154,44 @@ void typeString(std::string text) {
     alphabetKeys["x"] = 0x58;
     alphabetKeys["y"] = 0x59;
     alphabetKeys["z"] = 0x5A;
-    
+
+    // ISSUE FIX : space character
+    alphabetKeys[" "] = VK_SPACE;
+
     int i = 0;
-    
+
     while (i < text.size()) {
         std::string key(1, text[i]);
+        bool isUpper = isupper(text[i]);
+
         if (alphabetKeys.find(key) != alphabetKeys.end()) {
             WORD vkCode = alphabetKeys[key];
 
-            INPUT input = {};  // Zero out memory before using
+            INPUT input = {};
             input.type = INPUT_KEYBOARD;
+
+            if (isUpper) {
+                INPUT shiftPress = {};
+                shiftPress.type = INPUT_KEYBOARD;
+                shiftPress.ki.wVk = VK_SHIFT;
+                shiftPress.ki.dwFlags = 0;
+                SendInput(1, &shiftPress, sizeof(INPUT));
+            }
+
             input.ki.wVk = vkCode;
             input.ki.dwFlags = 0;
             SendInput(1, &input, sizeof(INPUT));
 
             input.ki.dwFlags = KEYEVENTF_KEYUP;
             SendInput(1, &input, sizeof(INPUT));
+
+            if (isUpper) {
+                INPUT shiftRelease = {};
+                shiftRelease.type = INPUT_KEYBOARD;
+                shiftRelease.ki.wVk = VK_SHIFT;
+                shiftRelease.ki.dwFlags = KEYEVENTF_KEYUP;
+                SendInput(1, &shiftRelease, sizeof(INPUT));
+            }
         }
         i++;
     }
