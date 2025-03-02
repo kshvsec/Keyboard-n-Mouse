@@ -3,3 +3,6 @@
 
 # In Progress
 - This software is in progress, Pull requests and issues are welcome
+
+# Issues
+- Does not include space character when handling spaces in typestring function
