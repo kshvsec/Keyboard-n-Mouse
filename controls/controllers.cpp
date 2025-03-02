@@ -97,3 +97,80 @@ void SpecialKeys(std::string key){
         item++;
     }
 }
+
+void typeString(std::string text) {
+    dict alphabetKeys;
+
+    alphabetKeys["A"] = 0x41;
+    alphabetKeys["B"] = 0x42;
+    alphabetKeys["C"] = 0x43;
+    alphabetKeys["D"] = 0x44;
+    alphabetKeys["E"] = 0x45;
+    alphabetKeys["F"] = 0x46;
+    alphabetKeys["G"] = 0x47;
+    alphabetKeys["H"] = 0x48;
+    alphabetKeys["I"] = 0x49;
+    alphabetKeys["J"] = 0x4A;
+    alphabetKeys["K"] = 0x4B;
+    alphabetKeys["L"] = 0x4C;
+    alphabetKeys["M"] = 0x4D;
+    alphabetKeys["N"] = 0x4E;
+    alphabetKeys["O"] = 0x4F;
+    alphabetKeys["P"] = 0x50;
+    alphabetKeys["Q"] = 0x51;
+    alphabetKeys["R"] = 0x52;
+    alphabetKeys["S"] = 0x53;
+    alphabetKeys["T"] = 0x54;
+    alphabetKeys["U"] = 0x55;
+    alphabetKeys["V"] = 0x56;
+    alphabetKeys["W"] = 0x57;
+    alphabetKeys["X"] = 0x58;
+    alphabetKeys["Y"] = 0x59;
+    alphabetKeys["Z"] = 0x5A;
+    
+    alphabetKeys["a"] = 0x41;
+    alphabetKeys["b"] = 0x42;
+    alphabetKeys["c"] = 0x43;
+    alphabetKeys["d"] = 0x44;
+    alphabetKeys["e"] = 0x45;
+    alphabetKeys["f"] = 0x46;
+    alphabetKeys["g"] = 0x47;
+    alphabetKeys["h"] = 0x48;
+    alphabetKeys["i"] = 0x49;
+    alphabetKeys["j"] = 0x4A;
+    alphabetKeys["k"] = 0x4B;
+    alphabetKeys["l"] = 0x4C;
+    alphabetKeys["m"] = 0x4D;
+    alphabetKeys["n"] = 0x4E;
+    alphabetKeys["o"] = 0x4F;
+    alphabetKeys["p"] = 0x50;
+    alphabetKeys["q"] = 0x51;
+    alphabetKeys["r"] = 0x52;
+    alphabetKeys["s"] = 0x53;
+    alphabetKeys["t"] = 0x54;
+    alphabetKeys["u"] = 0x55;
+    alphabetKeys["v"] = 0x56;
+    alphabetKeys["w"] = 0x57;
+    alphabetKeys["x"] = 0x58;
+    alphabetKeys["y"] = 0x59;
+    alphabetKeys["z"] = 0x5A;
+    
+    int i = 0;
+    
+    while (i < text.size()) {
+        std::string key(1, text[i]);
+        if (alphabetKeys.find(key) != alphabetKeys.end()) {
+            WORD vkCode = alphabetKeys[key];
+
+            INPUT input = {};  // Zero out memory before using
+            input.type = INPUT_KEYBOARD;
+            input.ki.wVk = vkCode;
+            input.ki.dwFlags = 0;
+            SendInput(1, &input, sizeof(INPUT));
+
+            input.ki.dwFlags = KEYEVENTF_KEYUP;
+            SendInput(1, &input, sizeof(INPUT));
+        }
+        i++;
+    }
+}
