@@ -5,5 +5,5 @@
 - This software is in progress, Pull requests and issues are welcome
 
 # Issues
-- Does not include space character when handling spaces in typestring function
+- ~~Does not include space character when handling spaces in typestring function~~
 - Cannot find a way to make mouse super flexible on the client side
