@@ -3,50 +3,68 @@
 #include <thread>
 #include <chrono>
 #include "controllers.hpp"
+#include <iostream>
+#include <algorithm>
+
+/*
+1 = Input as keyboard
+0 = Input as mouse
+
+0 on .dwFlags for keyboard = press
+*/
 
 void moveMouse(int x, int y){
     SetCursorPos(x, y);
 }
 
 void leftClick() {
-    INPUT input;
+    INPUT input = {0};
     input.type = 0;
     input.mi.dwFlags = 0x0002; //MOUSEEVENTF_LEFTDOWN
+    
     SendInput(1, &input, sizeof(INPUT));
     sleepInMs(100);
     input.mi.dwFlags = 0x0004; //MOUSEEVENTF_LEFTUP
+    
     SendInput(1, &input, sizeof(INPUT));
 }
 
 void holdLeftClick(int time){
-    INPUT input;
+    INPUT input = {0};
     input.type = 0;
     input.mi.dwFlags = 0x0002; //MOUSEEVENTF_LEFTDOWN
+    
     SendInput(1, &input, sizeof(INPUT));
     sleepInS(time);
     input.type = 0;
     input.mi.dwFlags = 0x0004; //MOUSEEVENTF_LEFTUP
+    
     SendInput(1, &input, sizeof(INPUT));
 }
 
 void rightClick() {
-    INPUT input;
+    INPUT input = {0};
     input.type = 0;
     input.mi.dwFlags = 0x0008; //MOUSEEVENTF_RIGHTDOWN;
+    
     SendInput(1, &input, sizeof(INPUT));
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
     input.mi.dwFlags = 0x0010; // MOUSEEVENTF_RIGHTUP;
+    
     SendInput(1, &input, sizeof(INPUT));
 }
 
-void holdRightClick() {
-    INPUT input;
+void holdRightClick(int time) {
+    INPUT input = {0};
     input.type = 0;
-    input.mi.dwFlags = 0x0008; //MOUSEEVENTF_RIGHTDOWN
+    input.mi.dwFlags = 0x0008; //MOUSEEVENTF_LEFTDOWN
+    
     SendInput(1, &input, sizeof(INPUT));
+    
     sleepInS(time);
     input.type = 0;
-    input.mi.dwFlags = 0x0010; //MOUSEEVENTF_RIGHTUP
+    input.mi.dwFlags = 0x0010; //MOUSEEVENTF_LEFTUP
+    
     SendInput(1, &input, sizeof(INPUT));
 }
 
@@ -82,7 +100,7 @@ void SpecialKeys(std::string key){
 
     while (i < sizeofkeys){
         if (item->first == key) {
-            INPUT input;
+            INPUT input = {0};
             input.type = 1;
             input.ki.dwFlags = 0;
             input.ki.wVk = item->second;
@@ -155,7 +173,7 @@ void typeString(std::string text) {
     alphabetKeys["y"] = 0x59;
     alphabetKeys["z"] = 0x5A;
 
-    // ISSUE FIX : space character
+    // Space key
     alphabetKeys[" "] = VK_SPACE;
 
     int i = 0;
@@ -167,7 +185,7 @@ void typeString(std::string text) {
         if (alphabetKeys.find(key) != alphabetKeys.end()) {
             WORD vkCode = alphabetKeys[key];
 
-            INPUT input = {};
+            INPUT input = {0};
             input.type = INPUT_KEYBOARD;
 
             if (isUpper) {
@@ -186,7 +204,7 @@ void typeString(std::string text) {
             SendInput(1, &input, sizeof(INPUT));
 
             if (isUpper) {
-                INPUT shiftRelease = {};
+                INPUT shiftRelease = {0};
                 shiftRelease.type = INPUT_KEYBOARD;
                 shiftRelease.ki.wVk = VK_SHIFT;
                 shiftRelease.ki.dwFlags = KEYEVENTF_KEYUP;
