@@ -77,6 +77,12 @@ int main(){
                 std::cout << "Moved cursor to " << x << ", " << y << std::endl;
             }
         }
+
+        if (strncmp(inputCommand.c_str(), "leftclick", 9) == 0){
+            showNotification("Left Click", "Left Click Initiated");
+            leftClick();
+            std::cout << "Left Click done" << std::endl;
+        }
     }
 
     // bye bye client (do not need this because the client is gonna be connected forever)
