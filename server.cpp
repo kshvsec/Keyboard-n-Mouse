@@ -1,16 +1,16 @@
-#include "controls/controllers.h"
+#include "controls/controllers.hpp"
 #include <iostream>
+#include <string>
 
 // g++ server.cpp controls/controllers.cpp -o server -lws2_32
 
+#define CLIENT_LIMIT 1
+
 using namespace std;
 
-void installModule(){
-    const char *command = R"(
-        powershell -ExecutionPolicy Bypass -NoProfile -Command 
-        "Install-Module -Name BurntToast"
-    )";
-    system(command);
+void showNotification(const std::string& title, const std::string& des) {
+    std::string command = "python ntf/ntf.py \"" + title + "\" \"" + des + "\" ";
+    system(command.c_str());
 }
 
 void clear(){
@@ -18,38 +18,60 @@ void clear(){
 }
 
 int main(){
+    
+    showNotification("Getting ready", "Your system is getting ready to look for the remote client to connect, please wait..");
 
-    std::cout << "This application uses BurntToast to display Windows Toast Notifications, Installing it right now..." << std::endl;
-    sleepInS(2);
-    installModule();
-
+    // wsadata
     WSADATA wsaData;
     WSAStartup(MAKEWORD(2, 2), &wsaData);
 
+    // socket (initial + config)
     SOCKET serverSocket = socket(AF_INET, SOCK_STREAM, 0);
-
     sockaddr_in serverAddr;
     serverAddr.sin_family = AF_INET;
     serverAddr.sin_addr.s_addr = INADDR_ANY;
-    serverAddr.sin_port = htons(8080);
+    serverAddr.sin_port = htons(4567); // TODO : bind the same port to client
 
+    // bind and listen
     bind(serverSocket, (sockaddr*)&serverAddr, sizeof(serverAddr));
-    listen(serverSocket, SOMAXCONN);
+    listen(serverSocket, CLIENT_LIMIT); // <--- change this value as per needs
 
+    // loading connection address
+    char h[1024];
+    gethostname(h, sizeof(h));
+    struct addrinfo *r;
+    clear();
+    
+    std::cout << "Machine connection address: " << inet_ntoa(*(struct in_addr*)gethostbyname(h)->h_addr) << std::endl;
+    showNotification("Ready", "Please enter the address in your remote client and connect to the system.");
+
+    // accepting client
     SOCKET clientSocket;
     sockaddr_in clientAddr;
     int clientSize = sizeof(clientAddr);
     clientSocket = accept(serverSocket, (sockaddr*)&clientAddr, &clientSize);
 
+    // handling client
     std::string inputCommand(1024, '\0');
     recv(clientSocket, &inputCommand[0], sizeof(inputCommand), 0);
     std::cout << "Received: " << inputCommand << std::endl;
 
-    if (inputCommand == "mouse"){
-
+    // mouse movement
+    if (inputCommand == "movemouse"){
+        showNotification("Mouse Engaged", "Please send the cordinates for the mouse");
+        std::string cordinates(1024, '\0');
+        recv(clientSocket, &cordinates[0], sizeof(cordinates), 0);
+        int x, y;
+        sscanf(cordinates.c_str(), "%d %d", &x, &y);
+        moveMouse(x, y);
+        std::cout << "Moved cursor to " << x << y << std::endl;
+        return;
     }
 
+    // bye bye client (do not need this because the client is gonna be connected forever)
+    /*
     closesocket(clientSocket);
     closesocket(serverSocket);
     WSACleanup();
+    */
 }
