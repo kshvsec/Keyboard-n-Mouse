@@ -2,7 +2,7 @@
 #include <iostream>
 #include <string>
 
-// g++ server.cpp controls/controllers.cpp -o server -lws2_32
+// cd "e:\codes\remote\" ; if ($?) { g++ server.cpp controls/controllers.cpp -o server -lws2_32} ; if ($?) { .\server }
 
 #define CLIENT_LIMIT 1
 
@@ -51,21 +51,32 @@ int main(){
     int clientSize = sizeof(clientAddr);
     clientSocket = accept(serverSocket, (sockaddr*)&clientAddr, &clientSize);
 
-    // handling client
-    std::string inputCommand(1024, '\0');
-    recv(clientSocket, &inputCommand[0], sizeof(inputCommand), 0);
-    std::cout << "Received: " << inputCommand << std::endl;
+    clear();
+    std::cout << "Client connected";
 
-    // mouse movement
-    if (inputCommand == "movemouse"){
-        showNotification("Mouse Engaged", "Please send the cordinates for the mouse");
-        std::string cordinates(1024, '\0');
-        recv(clientSocket, &cordinates[0], sizeof(cordinates), 0);
-        int x, y;
-        sscanf(cordinates.c_str(), "%d %d", &x, &y);
-        moveMouse(x, y);
-        std::cout << "Moved cursor to " << x << y << std::endl;
-        return;
+    while (true) {
+        // Handling client
+        std::string inputCommand(1024, '\0');
+        int bytesReceived = recv(clientSocket, &inputCommand[0], inputCommand.size(), 0);
+
+        if (bytesReceived <= 0) continue;  // Handle disconnection or errors
+
+        std::cout << "Received: " << inputCommand << std::endl;
+
+        // Mouse movement
+        if (strncmp(inputCommand.c_str(), "movemouse", 9) == 0) {
+            showNotification("Mouse Engaged", "Please send the coordinates for the mouse");
+
+            std::string coordinates(1024, '\0');
+            int bytesReceivedCoords = recv(clientSocket, &coordinates[0], coordinates.size(), 0);
+
+            if (bytesReceivedCoords > 0) {
+                int x, y;
+                sscanf(coordinates.c_str(), "%d %d", &x, &y);
+                moveMouse(x, y);
+                std::cout << "Moved cursor to " << x << ", " << y << std::endl;
+            }
+        }
     }
 
     // bye bye client (do not need this because the client is gonna be connected forever)
