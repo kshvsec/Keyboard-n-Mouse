@@ -1,7 +1,7 @@
 #include "controls/controllers.h"
 #include <iostream>
 
-// cd "e:\codes\remote\" ; if ($?) { g++ server.cpp controls/controllers.cpp -o server } ; if ($?) { .\server }
+// g++ server.cpp controls/controllers.cpp -o server -lws2_32
 
 using namespace std;
 
