@@ -53,7 +53,7 @@ int main(){
 
     clear();
     std::cout << "Client connected";
-
+    
     while (true) {
         // Handling client
         std::string inputCommand(1024, '\0');
@@ -63,25 +63,43 @@ int main(){
 
         std::cout << "Received: " << inputCommand << std::endl;
 
-        // Mouse movement
+        /*
+        
+        <---------------- PARING THE COMMANDS ----------------> 
+        
+        */
         if (strncmp(inputCommand.c_str(), "movemouse", 9) == 0) {
             showNotification("Mouse Engaged", "Please send the coordinates for the mouse");
 
             std::string coordinates(1024, '\0');
             int bytesReceivedCoords = recv(clientSocket, &coordinates[0], coordinates.size(), 0);
 
-            if (bytesReceivedCoords > 0) {
-                int x, y;
-                sscanf(coordinates.c_str(), "%d %d", &x, &y);
-                moveMouse(x, y);
-                std::cout << "Moved cursor to " << x << ", " << y << std::endl;
-            }
+            int x, y;
+            sscanf(coordinates.c_str(), "%d %d", &x, &y);
+            moveMouse(x, y);
+            std::cout << "Moved cursor to " << x << ", " << y << std::endl;
         }
 
         if (strncmp(inputCommand.c_str(), "leftclick", 9) == 0){
             showNotification("Left Click", "Left Click Initiated");
             leftClick();
             std::cout << "Left Click done" << std::endl;
+        }
+
+        if (strncmp(inputCommand.c_str(), "rightclick", 10) == 0){
+            showNotification("Right Click", "Right Click Initiated");
+            rightClick();
+            std::cout << "Right Click done" << std::endl;
+        }
+
+        if (strncmp(inputCommand.c_str(), "specialkey", 10) == 0){
+            showNotification("Locked Special Keys", "Please send the special key you want to send");
+            
+            std::string specialkeyinput(1024, '\0');
+            int bytesReceivedCoords = recv(clientSocket, &specialkeyinput[0], specialkeyinput.size(), 0);
+            
+            SpecialKeys(specialkeyinput);
+            std::cout << "Special Key Input" << std::endl; 
         }
     }
 
