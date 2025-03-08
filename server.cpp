@@ -9,7 +9,7 @@
 using namespace std;
 
 void showNotification(const std::string& title, const std::string& des) {
-    std::string command = "python ntf/ntf.py \"" + title + "\" \"" + des + "\" ";
+    std::string command = "python modules/ntf/ntf.py \"" + title + "\" \"" + des + "\" ";
     system(command.c_str());
 }
 
@@ -17,8 +17,22 @@ void clear(){
     system("clear || cls");
 }
 
-int main(){
-    
+int main() {
+
+    std::string ipportstring;
+
+    std::cout << "Enter IP:Port: ";
+    std::cin >> ipportstring;
+
+    int position = ipportstring.find(":");
+
+    std::string ipaddress = ipportstring.substr(0, position);
+    int port = std::stoi(ipportstring.substr(position+1));
+
+    //return 0; //debug
+    // std::cout << position; // debug
+    // return 0; // debug
+
     showNotification("Getting ready", "Your system is getting ready to look for the remote client to connect, please wait..");
 
     // wsadata
@@ -29,20 +43,16 @@ int main(){
     SOCKET serverSocket = socket(AF_INET, SOCK_STREAM, 0);
     sockaddr_in serverAddr;
     serverAddr.sin_family = AF_INET;
-    serverAddr.sin_addr.s_addr = INADDR_ANY;
-    serverAddr.sin_port = htons(4567); // TODO : bind the same port to client
+    serverAddr.sin_addr.s_addr = inet_addr(ipaddress.c_str());
+    serverAddr.sin_port = htons(port);
 
     // bind and listen
     bind(serverSocket, (sockaddr*)&serverAddr, sizeof(serverAddr));
     listen(serverSocket, CLIENT_LIMIT); // <--- change this value as per needs
 
     // loading connection address
-    char h[1024];
-    gethostname(h, sizeof(h));
-    struct addrinfo *r;
     clear();
-    
-    std::cout << "Machine connection address: " << inet_ntoa(*(struct in_addr*)gethostbyname(h)->h_addr) << std::endl;
+    std::cout << "Hosting on " << ipaddress << ":" << port;
     showNotification("Ready", "Please enter the address in your remote client and connect to the system.");
 
     // accepting client
@@ -53,7 +63,7 @@ int main(){
 
     clear();
     std::cout << "Client connected";
-    
+
     while (true) {
         // Handling client
         std::string inputCommand(1024, '\0');
@@ -61,11 +71,11 @@ int main(){
 
         if (bytesReceived <= 0) continue;  // Handle disconnection or errors
 
-        std::cout << "Received: " << inputCommand << std::endl;
+        // std::cout << "Received: " << inputCommand << std::endl; // debug, comment out
 
         /*
         
-        <---------------- PARING THE COMMANDS ----------------> 
+        PARSING THE COMMANDS
         
         */
         if (strncmp(inputCommand.c_str(), "movemouse", 9) == 0) {
@@ -100,6 +110,16 @@ int main(){
             
             SpecialKeys(specialkeyinput);
             std::cout << "Special Key Input" << std::endl; 
+        }
+
+        if (strncmp(inputCommand.c_str(), "type", 4) == 0){
+            showNotification("Locked Keyboard", "Please send a string to type next");
+
+            std::string typeoutstring;
+            int bytesReceivedCoords = recv(clientSocket, &typeoutstring[0], typeoutstring.size(), 0);
+
+            typeString(typeoutstring);
+            std::cout << "typed string" << std::endl;
         }
     }
 
