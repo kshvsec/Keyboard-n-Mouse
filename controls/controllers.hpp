@@ -6,6 +6,7 @@
 #include <thread>
 #include <chrono>
 #include <unordered_map>
+#include <algorithm>
 
 // oneline defined functions for thread sleep management
 
