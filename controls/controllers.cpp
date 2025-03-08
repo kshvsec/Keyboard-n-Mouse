@@ -1,10 +1,4 @@
-#include <windows.h>
-#include <string>
-#include <thread>
-#include <chrono>
 #include "controllers.hpp"
-#include <iostream>
-#include <algorithm>
 
 /*
 1 = Input as keyboard
