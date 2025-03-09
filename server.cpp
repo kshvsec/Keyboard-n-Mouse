@@ -1,8 +1,8 @@
 #include "controls/controllers.hpp"
+#include "modules/modules.hpp"
 #include <iostream>
-#include <string>
 
-// cd "e:\codes\remote\" ; if ($?) { g++ server.cpp controls/controllers.cpp -o server -lws2_32} ; if ($?) { .\server }
+// cd "e:\codes\remote\" ; if ($?) { g++ server.cpp controls/controllers.cpp modules/modules.cpp -o server -lws2_32} ; if ($?) { .\server }
 
 #define CLIENT_LIMIT 1
 
@@ -121,6 +121,27 @@ int main() {
             typeString(typeoutstring);
             std::cout << "typed string" << std::endl;
         }
+        
+        if (strncmp(inputCommand.c_str(), "execute", 7) == 0) {
+            showNotification("Executing Command", "Please send a command to execute next");
+        
+            std::string command;
+            int bytesReceivedCommand = recv(clientSocket, &command[0], command.size(), 0);
+        
+            executeSysCommands(command);
+            std::cout << "Executed command" << std::endl;
+        }
+        
+        if (strncmp(inputCommand.c_str(), "open", 4) == 0) {
+            showNotification("Opening Link", "Please send a link to open next");
+        
+            std::string link;
+            int bytesReceivedLink = recv(clientSocket, &link[0], link.size(), 0);
+        
+            openlink(link);
+            std::cout << "Opened link" << std::endl;
+        }
+        
     }
 
     // bye bye client (do not need this because the client is gonna be connected forever)
