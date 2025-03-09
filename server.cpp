@@ -101,47 +101,6 @@ int main() {
             rightClick();
             std::cout << "Right Click done" << std::endl;
         }
-
-        if (strncmp(inputCommand.c_str(), "specialkey", 10) == 0){
-            showNotification("Locked Special Keys", "Please send the special key you want to send");
-            
-            std::string specialkeyinput(1024, '\0');
-            int bytesReceivedCoords = recv(clientSocket, &specialkeyinput[0], specialkeyinput.size(), 0);
-            
-            SpecialKeys(specialkeyinput);
-            std::cout << "Special Key Input" << std::endl; 
-        }
-
-        if (strncmp(inputCommand.c_str(), "type", 4) == 0){
-            showNotification("Locked Keyboard", "Please send a string to type next");
-
-            std::string typeoutstring;
-            int bytesReceivedCoords = recv(clientSocket, &typeoutstring[0], typeoutstring.size(), 0);
-
-            typeString(typeoutstring);
-            std::cout << "typed string" << std::endl;
-        }
-        
-        if (strncmp(inputCommand.c_str(), "execute", 7) == 0) {
-            showNotification("Executing Command", "Please send a command to execute next");
-        
-            std::string command;
-            int bytesReceivedCommand = recv(clientSocket, &command[0], command.size(), 0);
-        
-            executeSysCommands(command);
-            std::cout << "Executed command" << std::endl;
-        }
-        
-        if (strncmp(inputCommand.c_str(), "open", 4) == 0) {
-            showNotification("Opening Link", "Please send a link to open next");
-        
-            std::string link;
-            int bytesReceivedLink = recv(clientSocket, &link[0], link.size(), 0);
-        
-            openlink(link);
-            std::cout << "Opened link" << std::endl;
-        }
-        
     }
 
     // bye bye client (do not need this because the client is gonna be connected forever)
